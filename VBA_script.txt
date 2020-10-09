@@ -1,84 +1,1 @@
-Sub StockData()
-
-Dim total As Double
-Dim i As Long
-Dim change As Double
-Dim j As Integer
-Dim start As Long
-Dim rowCount As Long
-Dim percentChange As Double
-Dim days As Integer
-Dim dailyChange As Double
-Dim averageChange As Double
-Dim ws As Worksheet
-
-For Each ws In ThisWorkbook.Worksheets
-    total = 0
-    change = 0
-    start = 2
-    dailyChange = 0
-    
-    i = 0
-    j = 0
-    
-    ws.Range("I1").Value = "Ticker"
-    ws.Range("J1").Value = "Yearly Change"
-    ws.Range("K1").Value = "Percent Change"
-    ws.Range("L1").Value = "Total Stock Volume"
-    
-    rowCount = Cells(Rows.Count, "A").End(xlUp)
-     
-    For i = 2 To rowCount
-        If ws.Cells(i + 1, 1).Value <> ws.Cells(i, 1).Value Then
-            total = total + Cells(i, 7).Value
-            
-            If total = 0 Then
-                ws.Range("I" & 2 + j).Value = ws.Cells(i, 1).Value
-                ws.Range("J" & 2 + j).Value = 0
-                ws.Range("K" & 2 + j).Value = "%" & 0
-                ws.Range("L" & 2 + j).Value = 0
-            Else
-                If ws.Cells(start, 3).Value = 0 Then
-                    For find_value = start To i
-                    If ws.Cells(find_value, 3).Value <> 0 Then
-                        start = find_value
-                        
-                Exit For
-                     End If
-                Next find_value
-           End If
-            
-            'Calculate Change
-            change = (ws.Cells(i, 6).Value - ws.Cells(start, 3).Value)
-            percentChange = Round((change / ws.Cells(start, 3) * 100), 2)
-            
-            start = i + 1
-                
-                ws.Range("I" & 2 + j).Value = ws.Cells(i, 1).Value
-                ws.Range("J" & 2 + j).Value = change
-                ws.Range("K" & 2 + j).Value = "%" & percentChange
-                ws.Range("L" & 2 + j).Value = total
-                
-                Select Case change
-                    Case Is > 0
-                        ws.Range("J" & 2 + j).Interior.Color = 4
-                    Case Is < 0
-                        ws.Range("J" & 2 + j).Interior.Color = 3
-                End Select
-            End If
-            
-            total = 0
-            change = 0
-            j = j + 1
-            days = 0
-            dailyChange = 0
-            
-         
-         
-         
-            
-End If
-
-        
-
-End Sub
+Sub StockData()Dim total As DoubleDim i As LongDim YearlyChange As DoubleDim j As IntegerDim start As LongDim rowCount As LongDim percentChange As DoubleDim days As IntegerDim dailyChange As DoubleDim averageChange As DoubleDim ws As WorksheetDim ticker As StringDim closingprice As LongDim openingprice As LongDim sRow As LongFor Each ws In ThisWorkbook.Worksheets    total = 0    openingprice = ws.Cells(2, 3).Value                sRow = 2        'Output table    ws.Cells(1, 9).Value = "Ticker"    ws.Cells(1, 10).Value = "Yearly Change"    ws.Cells(1, 11).Value = "Percent Change"    ws.Cells(1, 12).Value = "Total Stock Volume"        rowCount = ws.Cells(Rows.Count, 1).End(xlUp).Row        'Looping through 2 to last row    For i = 2 To rowCount    ticker = ws.Cells(i, 1).Value    If ws.Cells(i + 1, 1).Value <> ws.Cells(i, 1).Value Then            total = total + ws.Cells(i, 7).Value                        closingprice = ws.Cells(i, 6).Value                        YearlyChange = closingprice - openingprice        'Conditional permittingon yearly change    If YearlyChange > 0 Then    ws.Cells(sRow, 10).Interior.ColorIndex = 4    Else    ws.Cells(sRow, 10).Interior.ColorIndex = 3    End If        If openingprice = 0 Then    percentChange = 0    Else    percentChange = YearlyChange / openingprice    End If        'Assigning new column values to respective columns    ws.Cells(sRow, 9).Value = ticker    ws.Cells(sRow, 10).Value = YearlyChange    ws.Cells(sRow, 11).Value = percentChange    ws.Cells(sRow, 11).NumberFormat = "0.00%"    ws.Cells(sRow, 12).Value = total        sRow = sRow + 1    total = 0    openingprice = ws.Cells(i + 1, 3).Value    Else    YearlyChange = closingprice - openingprice    total = total + ws.Cells(i, 7).Value    End If    Next i    Next ws    End Sub
